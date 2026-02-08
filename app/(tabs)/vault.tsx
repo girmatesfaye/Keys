@@ -1,32 +1,55 @@
 import { Feather, Ionicons } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
+import { Image } from "expo-image";
 import { useRouter } from "expo-router";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
-
-const filters = [
-  { label: "All", value: "all" },
-  { label: "Social", value: "SOCIAL" },
-  { label: "Shopping", value: "SHOPPING" },
-  { label: "Bank", value: "FINANCE" },
-  { label: "Travel", value: "TRAVEL" },
-];
-
-const vaultItems = [
-  { name: "Netflix", category: "ENTERTAINMENT", color: "bg-rose-100" },
-  { name: "Amazon", category: "SHOPPING", color: "bg-amber-100" },
-  { name: "Gmail", category: "EMAIL", color: "bg-orange-100" },
-  { name: "Spotify", category: "MUSIC", color: "bg-emerald-100" },
-  { name: "Banking", category: "FINANCE", color: "bg-slate-200" },
-  { name: "Work Slack", category: "WORK", color: "bg-fuchsia-100" },
-  { name: "Twitter / X", category: "SOCIAL", color: "bg-zinc-200" },
-  { name: "Linkedin", category: "CAREER", color: "bg-sky-100" },
-  { name: "Trip Planner", category: "TRAVEL", color: "bg-blue-100" },
-];
+import { getCategoryColor, vaultFilters } from "../../constants/vault";
+import { getAllCredentials } from "../../lib/secureStore";
 
 export default function VaultScreen() {
   const router = useRouter();
   const [activeFilter, setActiveFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [vaultItems, setVaultItems] = useState<
+    {
+      id: string;
+      name: string;
+      category: string;
+      color: string;
+      iconUri?: string | null;
+    }[]
+  >([]);
+
+  useFocusEffect(
+    useCallback(() => {
+      let isActive = true;
+
+      const loadVault = async () => {
+        const credentials = await getAllCredentials();
+        if (!isActive) {
+          return;
+        }
+
+        const items = credentials.map((item) => ({
+          id: item.id,
+          name: item.serviceName,
+          category: item.category,
+          color: getCategoryColor(item.category),
+          iconUri: item.iconUri,
+        }));
+
+        credentials.length = 0;
+        setVaultItems(items);
+      };
+
+      loadVault();
+
+      return () => {
+        isActive = false;
+      };
+    }, []),
+  );
 
   const filteredItems = useMemo(() => {
     const normalizedQuery = searchQuery.trim().toLowerCase();
@@ -41,7 +64,7 @@ export default function VaultScreen() {
 
       return matchesFilter && matchesSearch;
     });
-  }, [activeFilter, searchQuery]);
+  }, [activeFilter, searchQuery, vaultItems]);
 
   return (
     <View className="flex-1 bg-[#F4F5F7]">
@@ -92,7 +115,7 @@ export default function VaultScreen() {
             className="mt-4"
             contentContainerClassName="gap-2"
           >
-            {filters.map((filter) => {
+            {vaultFilters.map((filter) => {
               const isActive = activeFilter === filter.value;
 
               return (
@@ -117,16 +140,32 @@ export default function VaultScreen() {
 
           <View className="mt-4 flex-row flex-wrap justify-between">
             {filteredItems.map((item) => (
-              <View
-                key={item.name}
+              <Pressable
+                key={item.id}
+                onPress={() =>
+                  router.push({
+                    pathname: "/vault-edit",
+                    params: { id: item.id },
+                  })
+                }
                 className="mb-4 w-[48%] rounded-2xl bg-white p-4 shadow-sm"
               >
                 <View
-                  className={`h-12 w-12 items-center justify-center rounded-2xl ${item.color}`}
+                  className={`h-12 w-12 items-center justify-center overflow-hidden rounded-2xl ${
+                    item.iconUri ? "bg-white" : item.color
+                  }`}
                 >
-                  <Text className="text-base font-semibold text-slate-700">
-                    {item.name.slice(0, 1)}
-                  </Text>
+                  {item.iconUri ? (
+                    <Image
+                      source={{ uri: item.iconUri }}
+                      className="h-12 w-12"
+                      contentFit="cover"
+                    />
+                  ) : (
+                    <Text className="text-base font-semibold text-slate-700">
+                      {item.name.slice(0, 1)}
+                    </Text>
+                  )}
                 </View>
                 <Text className="mt-3 text-sm font-semibold text-slate-900">
                   {item.name}
@@ -134,7 +173,7 @@ export default function VaultScreen() {
                 <Text className="mt-1 text-[10px] uppercase tracking-widest text-slate-400">
                   {item.category}
                 </Text>
-              </View>
+              </Pressable>
             ))}
             {filteredItems.length === 0 && (
               <View className="w-full items-center rounded-2xl bg-slate-50 px-4 py-8">
