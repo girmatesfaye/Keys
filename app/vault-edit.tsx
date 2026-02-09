@@ -212,8 +212,8 @@ export default function VaultAddScreen() {
             </Text>
           </Pressable>
 
-          <Pressable className="mt-4 items-center rounded-2xl bg-white px-6 py-3 shadow-sm">
-            <Text className="text-sm font-semibold text-rose-500">
+          <Pressable className="mt-4 items-center rounded-2xl bg-red-500 px-6 py-3 shadow-sm">
+            <Text className="text-sm font-semibold text-white">
               Delete Account
             </Text>
           </Pressable>

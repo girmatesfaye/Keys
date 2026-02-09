@@ -344,7 +344,7 @@ export default function VaultAddScreen() {
             <View className="mt-2 h-1 rounded-full bg-slate-200">
               <View
                 className={`h-1 rounded-full ${strengthColor}`}
-                style={{ width: `${strengthScore / 4 * 100}%` }}
+                style={{ width: `${(strengthScore / 4) * 100}%` }}
               />
             </View>
             <Text className={`mt-2 text-xs font-semibold ${strengthTextColor}`}>
