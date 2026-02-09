@@ -7,12 +7,13 @@ import {
   KeyboardAvoidingView,
   Pressable,
   ScrollView,
+  StyleSheet,
   Text,
   TextInput,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { categoryOptions } from "../constants/vault";
+import { categoryOptions, getWebsiteLogoUrl } from "../constants/vault";
 import { saveCredential } from "../lib/secureStore";
 
 const generatePassword = (length = 14) => {
@@ -96,6 +97,22 @@ export default function VaultAddScreen() {
 
   const isValidImageLink = (value: string) => /^https?:\/\//.test(value.trim());
 
+  const isImageUrl = (value: string) =>
+    /\.(png|jpe?g|webp|gif|svg|ico)(\?.*)?$/i.test(value.trim());
+
+  const resolveIconUri = (value: string) => {
+    const trimmed = value.trim();
+    if (!trimmed) {
+      return "";
+    }
+
+    if (isImageUrl(trimmed) && isValidImageLink(trimmed)) {
+      return trimmed;
+    }
+
+    return getWebsiteLogoUrl(trimmed);
+  };
+
   const handlePickImage = async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permission.granted) {
@@ -118,12 +135,13 @@ export default function VaultAddScreen() {
 
   const handleApplyLink = () => {
     const trimmed = linkValue.trim();
-    if (!isValidImageLink(trimmed)) {
-      setFormError("Add a valid image link.");
+    const resolved = resolveIconUri(trimmed);
+    if (!resolved) {
+      setFormError("Add a valid image or website link.");
       return;
     }
 
-    setIconUri(trimmed);
+    setIconUri(resolved);
     setLinkVisible(false);
     setLinkValue("");
     setFormError("");
@@ -149,6 +167,7 @@ export default function VaultAddScreen() {
 
     await saveCredential({
       serviceName,
+      website: website.trim(),
       email: email.trim(),
       password,
       category,
@@ -208,7 +227,7 @@ export default function VaultAddScreen() {
                 {iconUri ? (
                   <Image
                     source={{ uri: iconUri }}
-                    className="h-14 w-14 rounded-full"
+                    style={styles.iconPreview}
                     contentFit="cover"
                   />
                 ) : (
@@ -401,3 +420,11 @@ export default function VaultAddScreen() {
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  iconPreview: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+  },
+});

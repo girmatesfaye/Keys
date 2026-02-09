@@ -1,12 +1,61 @@
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { useState } from "react";
-import { Pressable, ScrollView, Switch, Text, View } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import {
+  Animated,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  Text,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function SettingsScreen() {
   const router = useRouter();
   const [backupEnabled, setBackupEnabled] = useState(true);
+  const toastOpacity = useRef(new Animated.Value(1)).current;
+  const toastTranslate = useRef(new Animated.Value(0)).current;
+  const toastScale = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.parallel([
+          Animated.timing(toastTranslate, {
+            toValue: -6,
+            duration: 220,
+            useNativeDriver: true,
+          }),
+          Animated.timing(toastScale, {
+            toValue: 1.02,
+            duration: 220,
+            useNativeDriver: true,
+          }),
+        ]),
+        Animated.parallel([
+          Animated.timing(toastTranslate, {
+            toValue: 0,
+            duration: 220,
+            useNativeDriver: true,
+          }),
+          Animated.timing(toastScale, {
+            toValue: 1,
+            duration: 220,
+            useNativeDriver: true,
+          }),
+        ]),
+        Animated.delay(1200),
+      ]),
+    );
+
+    loop.start();
+
+    return () => {
+      loop.stop();
+    };
+  }, [toastScale, toastTranslate]);
 
   return (
     <SafeAreaView className="flex-1 bg-[#F7F8FC]" edges={["top"]}>
@@ -32,6 +81,9 @@ export default function SettingsScreen() {
             <View className="h-40 w-40 items-center justify-center rounded-full bg-[#E6EFFB]">
               <View className="h-28 w-28 items-center justify-center rounded-full bg-[#EAF7F5]">
                 <View className="h-20 w-20 items-center justify-center rounded-3xl bg-[#39C0B7]">
+                  <View className="absolute -top-3 h-7 w-7 items-center justify-center rounded-full bg-emerald-500 shadow-sm">
+                    <Ionicons name="sparkles" size={14} color="#FFFFFF" />
+                  </View>
                   <Ionicons name="cloud" size={36} color="#0B1B3A" />
                   <View className="absolute h-9 w-9 items-center justify-center rounded-2xl bg-[#5B61E9]">
                     <Ionicons name="lock-closed" size={18} color="#FFFFFF" />
@@ -97,6 +149,38 @@ export default function SettingsScreen() {
           before being saved to your iCloud Drive.
         </Text>
       </ScrollView>
+
+      <Animated.View
+        style={[
+          styles.toast,
+          {
+            opacity: toastOpacity,
+            transform: [{ translateY: toastTranslate }, { scale: toastScale }],
+          },
+        ]}
+      >
+        <Feather name="clock" size={15} color="#FFFFFF" />
+        <Text className="ml-2 text-lg font-bold text-white">Coming soon</Text>
+      </Animated.View>
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  toast: {
+    position: "absolute",
+    top: 90,
+    alignSelf: "center",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 999,
+    backgroundColor: "#4223f2",
+    shadowColor: "#000000",
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 6,
+  },
+});

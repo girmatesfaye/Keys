@@ -3,6 +3,7 @@ import * as SecureStore from "expo-secure-store";
 type VaultCredential = {
   id: string;
   serviceName: string;
+  website?: string;
   email: string;
   password: string;
   category: string;
@@ -44,6 +45,23 @@ const writeIndex = async (ids: string[]) => {
 
 export const saveCredential = async (input: CredentialInput) => {
   const id = createId();
+  const payload: VaultCredential = { id, ...input };
+  await SecureStore.setItemAsync(
+    `${ITEM_PREFIX}${id}`,
+    JSON.stringify(payload),
+    SECURE_OPTIONS,
+  );
+
+  const index = await readIndex();
+  if (!index.includes(id)) {
+    index.push(id);
+    await writeIndex(index);
+  }
+
+  return id;
+};
+
+export const updateCredential = async (id: string, input: CredentialInput) => {
   const payload: VaultCredential = { id, ...input };
   await SecureStore.setItemAsync(
     `${ITEM_PREFIX}${id}`,

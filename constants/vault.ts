@@ -38,3 +38,19 @@ export const getCategoryColor = (category: string) => {
       return "bg-slate-100";
   }
 };
+
+export const getWebsiteLogoUrl = (value: string) => {
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return "";
+  }
+
+  const withoutProtocol = trimmed.replace(/^https?:\/\//, "");
+  const domain = withoutProtocol.split("/")[0]?.trim();
+
+  if (!domain || domain.includes(" ") || !domain.includes(".")) {
+    return "";
+  }
+
+  return `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+};

@@ -3,8 +3,19 @@ import { useFocusEffect } from "@react-navigation/native";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
-import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
-import { getCategoryColor, vaultFilters } from "../../constants/vault";
+import {
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
+import {
+  getCategoryColor,
+  getWebsiteLogoUrl,
+  vaultFilters,
+} from "../../constants/vault";
 import { getAllCredentials } from "../../lib/secureStore";
 
 export default function VaultScreen() {
@@ -15,6 +26,7 @@ export default function VaultScreen() {
     {
       id: string;
       name: string;
+      website?: string;
       category: string;
       color: string;
       iconUri?: string | null;
@@ -34,6 +46,7 @@ export default function VaultScreen() {
         const items = credentials.map((item) => ({
           id: item.id,
           name: item.serviceName,
+          website: item.website,
           category: item.category,
           color: getCategoryColor(item.category),
           iconUri: item.iconUri,
@@ -155,10 +168,15 @@ export default function VaultScreen() {
                     item.iconUri ? "bg-white" : item.color
                   }`}
                 >
-                  {item.iconUri ? (
+                  {item.iconUri ||
+                  getWebsiteLogoUrl(item.website ?? item.name) ? (
                     <Image
-                      source={{ uri: item.iconUri }}
-                      className="h-12 w-12"
+                      source={{
+                        uri:
+                          item.iconUri ||
+                          getWebsiteLogoUrl(item.website ?? item.name),
+                      }}
+                      style={styles.gridIcon}
                       contentFit="cover"
                     />
                   ) : (
@@ -188,10 +206,17 @@ export default function VaultScreen() {
 
       <Pressable
         onPress={() => router.push("/vault-add")}
-        className="absolute bottom-6 right-6 h-12 w-12 items-center justify-center rounded-full bg-rose-500 shadow-lg"
+        className="absolute bottom-6 right-6 h-14 w-14 items-center justify-center rounded-full bg-indigo-500 shadow-lg"
       >
         <Feather name="plus" size={20} color="#ffffff" />
       </Pressable>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  gridIcon: {
+    width: 48,
+    height: 48,
+  },
+});

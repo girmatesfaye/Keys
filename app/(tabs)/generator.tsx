@@ -227,23 +227,23 @@ export default function GeneratorScreen() {
               );
             })}
           </View>
-          <Text className="mt-3 text-center text-sm font-semibold text-emerald-600">
+          <Text className="mt-3 text-center text-sm font-semibold text-indigo-500">
             {strength.label}
           </Text>
         </Animated.View>
 
         <View className="mt-8 flex-row items-center justify-between">
           <Text className="text-lg font-semibold text-slate-900">Length</Text>
-          <Text className="text-2xl font-bold text-orange-500">{length}</Text>
+          <Text className="text-2xl font-bold text-indigo-500">{length}</Text>
         </View>
         <Slider
           value={length}
           minimumValue={6}
           maximumValue={24}
           step={1}
-          minimumTrackTintColor="#F97316"
+          minimumTrackTintColor="#4223f2"
           maximumTrackTintColor="#E5E7EB"
-          thumbTintColor="#F97316"
+          thumbTintColor="#4223f2"
           onValueChange={(value) => setLength(Math.round(value))}
           onSlidingComplete={() => regenerate()}
           style={{ marginTop: 12 }}
@@ -263,8 +263,8 @@ export default function GeneratorScreen() {
                 handleToggle(setIncludeNumbers, value);
                 regenerate();
               }}
-              trackColor={{ false: "#E5E7EB", true: "#FDBA74" }}
-              thumbColor={includeNumbers ? "#F97316" : "#FFFFFF"}
+              trackColor={{ false: "#8874fd", true: "#8874fd" }}
+              thumbColor={includeNumbers ? "#4223f2" : "#FFFFFF"}
             />
           </View>
 
@@ -281,8 +281,8 @@ export default function GeneratorScreen() {
                 handleToggle(setIncludeSymbols, value);
                 regenerate();
               }}
-              trackColor={{ false: "#E5E7EB", true: "#FDBA74" }}
-              thumbColor={includeSymbols ? "#F97316" : "#FFFFFF"}
+              trackColor={{ false: "#8874fd", true: "#8874fd" }}
+              thumbColor={includeSymbols ? "#4223f2" : "#FFFFFF"}
             />
           </View>
 
@@ -299,15 +299,15 @@ export default function GeneratorScreen() {
                 handleToggle(setIncludeUppercase, value);
                 regenerate();
               }}
-              trackColor={{ false: "#E5E7EB", true: "#FDBA74" }}
-              thumbColor={includeUppercase ? "#F97316" : "#FFFFFF"}
+              trackColor={{ false: "#8874fd", true: "#8874fd" }}
+              thumbColor={includeUppercase ? "#4223f2" : "#FFFFFF"}
             />
           </View>
         </View>
 
         <Pressable
           onPress={handleCopy}
-          className="mt-10 flex-row items-center justify-center rounded-full bg-orange-500 px-6 py-4 shadow-lg"
+          className="mt-10 flex-row items-center justify-center rounded-full bg-indigo-500 px-6 py-4 shadow-lg"
         >
           <Feather name="copy" size={18} color="#FFFFFF" />
           <Text className="ml-2 text-base font-semibold text-white">

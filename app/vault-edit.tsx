@@ -1,29 +1,73 @@
 import { Feather } from "@expo/vector-icons";
 import * as Clipboard from "expo-clipboard";
+import { Image } from "expo-image";
 import * as Linking from "expo-linking";
-import { useRouter } from "expo-router";
-import { useMemo, useRef, useState } from "react";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
+  Alert,
   KeyboardAvoidingView,
+  Platform,
   Pressable,
   ScrollView,
+  StyleSheet,
   Text,
   TextInput,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { getWebsiteLogoUrl } from "../constants/vault";
+import { deleteCredential, getCredential } from "../lib/secureStore";
 
 export default function VaultAddScreen() {
   const router = useRouter();
-  const [email, setEmail] = useState("alex.morris@gmail.com");
-  const [password, setPassword] = useState("supersecurepassword");
-  const [website, setWebsite] = useState("netflix.com");
+  const { id } = useLocalSearchParams<{ id?: string }>();
+  const [serviceName, setServiceName] = useState("");
+  const [iconUri, setIconUri] = useState<string | null>(null);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [website, setWebsite] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [emailTouched, setEmailTouched] = useState(false);
   const [websiteTouched, setWebsiteTouched] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toastVisible, setToastVisible] = useState(false);
+  const [error, setError] = useState("");
   const toastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    let isActive = true;
+
+    const loadCredential = async () => {
+      if (!id) {
+        setError("Missing vault item.");
+        return;
+      }
+
+      const item = await getCredential(id);
+      if (!isActive) {
+        return;
+      }
+
+      if (!item) {
+        setError("Vault item not found.");
+        return;
+      }
+
+      setError("");
+      setServiceName(item.serviceName);
+      setIconUri(item.iconUri ?? null);
+      setEmail(item.email);
+      setPassword(item.password);
+      setWebsite(item.website ?? item.serviceName);
+    };
+
+    loadCredential();
+
+    return () => {
+      isActive = false;
+    };
+  }, [id]);
 
   const showToast = (message: string) => {
     setToastMessage(message);
@@ -70,37 +114,91 @@ export default function VaultAddScreen() {
     return `https://${trimmed}`;
   }, [website]);
 
+  const resolvedIconUri = iconUri
+    ? iconUri
+    : website
+      ? getWebsiteLogoUrl(website)
+      : "";
+
+  const handleDelete = () => {
+    if (!id) {
+      return;
+    }
+
+    Alert.alert(
+      "Delete entry",
+      "This will remove the credential from your vault.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            await deleteCredential(id);
+            router.back();
+          },
+        },
+      ],
+    );
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-[#F4F5F7]" edges={["top", "bottom"]}>
       <KeyboardAvoidingView
-        behavior="padding"
-        keyboardVerticalOffset={80}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 0}
         className="flex-1"
       >
         <ScrollView
-          contentContainerClassName="px-5 pb-28"
+          contentContainerClassName="px-5"
+          contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
           automaticallyAdjustKeyboardInsets
         >
-          <Pressable
-            onPress={() => router.back()}
-            className="mt-6 h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm"
-          >
-            <Feather name="arrow-left" size={18} color="#6366F1" />
-          </Pressable>
+          <View className="mt-4 flex-row items-center justify-between">
+            <Pressable
+              onPress={() => router.back()}
+              className="h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm"
+            >
+              <Feather name="arrow-left" size={18} color="#5f4cde" />
+            </Pressable>
+            <Text className="text-base font-semibold text-slate-900">
+              Vault Detail
+            </Text>
+            <View className="h-10 w-10" />
+          </View>
+
+          {error.length > 0 && (
+            <View className="mt-6 rounded-2xl border border-rose-100 bg-rose-50 px-4 py-3">
+              <Text className="text-xs font-semibold text-rose-600">
+                {error}
+              </Text>
+            </View>
+          )}
 
           <View className="mt-6 items-center">
-            <View className="relative h-20 w-20 items-center justify-center rounded-full bg-black">
-              <Text className="text-2xl font-bold text-red-500">N</Text>
+            <View className="relative h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-black">
+              {resolvedIconUri ? (
+                <Image
+                  source={{ uri: resolvedIconUri }}
+                  style={styles.headerIcon}
+                  contentFit="cover"
+                />
+              ) : (
+                <Text className="text-2xl font-bold text-red-500">
+                  {(serviceName || "?").slice(0, 1).toUpperCase()}
+                </Text>
+              )}
               <Pressable className="absolute -bottom-1 -right-1 h-6 w-6 items-center justify-center rounded-full bg-indigo-500">
                 <Feather name="edit-2" size={12} color="#ffffff" />
               </Pressable>
             </View>
             <Text className="mt-3 text-xl font-bold text-slate-900">
-              Netflix
+              {serviceName || "Vault Item"}
             </Text>
             <Text className="text-xs uppercase tracking-widest text-slate-400">
-              Entertainment
+              Account
             </Text>
           </View>
 
@@ -204,7 +302,12 @@ export default function VaultAddScreen() {
           </View>
 
           <Pressable
-            onPress={() => router.push("/edit-account")}
+            onPress={() =>
+              router.push({
+                pathname: "/edit-account",
+                params: id ? { id } : undefined,
+              })
+            }
             className="mt-8 items-center rounded-2xl bg-white px-6 py-3 shadow-sm"
           >
             <Text className="text-sm font-semibold text-slate-700">
@@ -212,7 +315,10 @@ export default function VaultAddScreen() {
             </Text>
           </Pressable>
 
-          <Pressable className="mt-4 items-center rounded-2xl bg-red-500 px-6 py-3 shadow-sm">
+          <Pressable
+            onPress={handleDelete}
+            className="mt-4 items-center rounded-2xl bg-red-500 px-6 py-3 shadow-sm"
+          >
             <Text className="text-sm font-semibold text-white">
               Delete Account
             </Text>
@@ -230,3 +336,14 @@ export default function VaultAddScreen() {
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  headerIcon: {
+    width: 80,
+    height: 80,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 20,
+  },
+});
