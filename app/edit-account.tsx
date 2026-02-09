@@ -5,6 +5,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import {
   KeyboardAvoidingView,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -145,8 +146,8 @@ export default function EditAccountScreen() {
   return (
     <SafeAreaView className="flex-1 bg-[#F4F5F7]" edges={["top", "bottom"]}>
       <KeyboardAvoidingView
-        behavior="padding"
-        keyboardVerticalOffset={80}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 0}
         className="flex-1"
       >
         <ScrollView

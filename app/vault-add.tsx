@@ -5,6 +5,7 @@ import { useRouter } from "expo-router";
 import { useMemo, useState } from "react";
 import {
   KeyboardAvoidingView,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -187,8 +188,8 @@ export default function VaultAddScreen() {
   return (
     <SafeAreaView className="flex-1 bg-[#F5F6FA]" edges={["top", "bottom"]}>
       <KeyboardAvoidingView
-        behavior="padding"
-        keyboardVerticalOffset={80}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 0}
         className="flex-1"
       >
         <ScrollView
