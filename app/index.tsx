@@ -1,8 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
 import * as LocalAuthentication from "expo-local-authentication";
 import { useRouter } from "expo-router";
-import { useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import * as SecureStore from "expo-secure-store";
+import { useEffect, useState } from "react";
+import { Pressable, View } from "react-native";
+import { Text } from "../components/typography";
 
 export default function IndexScreen() {
   const router = useRouter();
@@ -22,7 +24,9 @@ export default function IndexScreen() {
       const isEnrolled = await LocalAuthentication.isEnrolledAsync();
 
       if (!hasHardware || !isEnrolled) {
-        setErrorText("Fingerprint is not available. Use Master Password.");
+        // If biometrics aren't available, we don't auto-redirect,
+        // we just let the user see the screen and click "Master Password" manually.
+        // Or you could use: router.replace("/master-password");
         return;
       }
 
@@ -48,6 +52,24 @@ export default function IndexScreen() {
       setIsAuthenticating(false);
     }
   };
+
+  useEffect(() => {
+    async function checkSetup() {
+      try {
+        const stored = await SecureStore.getItemAsync("master_password");
+        if (!stored) {
+          // No password exists? Go to setup
+          router.replace("/setup");
+        } else {
+          // Password exists? Try biometrics immediately
+          handleUnlock();
+        }
+      } catch (e) {
+        console.log("Storage check failed", e);
+      }
+    }
+    checkSetup();
+  }, []);
 
   return (
     <View className="flex-1 bg-[#EEF3FF] px-6 pt-16">

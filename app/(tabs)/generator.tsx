@@ -3,15 +3,9 @@ import Slider from "@react-native-community/slider";
 import * as Clipboard from "expo-clipboard";
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {
-  Animated,
-  Pressable,
-  ScrollView,
-  Switch,
-  Text,
-  View,
-} from "react-native";
+import { Animated, Pressable, ScrollView, Switch, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Text } from "../../components/typography";
 
 const SYMBOLS = "!@#$";
 const NUMBERS = "0123456789";

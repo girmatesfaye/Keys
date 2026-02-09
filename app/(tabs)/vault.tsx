@@ -3,14 +3,8 @@ import { useFocusEffect } from "@react-navigation/native";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
-import {
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { Text, TextInput } from "../../components/typography";
 import {
   getCategoryColor,
   getWebsiteLogoUrl,
@@ -81,14 +75,14 @@ export default function VaultScreen() {
 
   return (
     <View className="flex-1 bg-[#F4F5F7]">
-      <ScrollView contentContainerClassName="px-5 pb-20">
+      <ScrollView contentContainerClassName="px-2 pb-20">
         <Text className="mt-8 text-xs uppercase text-slate-400 tracking-widest">
           My vault
         </Text>
         <Text className="mt-2 text-2xl font-bold text-slate-900">
-          Good Morning,
+          Good Morning
         </Text>
-        <Text className="text-2xl font-bold text-slate-900">Alex</Text>
+        {/* <Text className="text-2xl font-bold text-slate-900">Alex</Text> */}
 
         <View className="mt-5 rounded-2xl bg-white px-4 py-4 shadow-sm">
           <View className="flex-row items-center justify-between">

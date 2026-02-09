@@ -11,11 +11,10 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
-  Text,
-  TextInput,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Text, TextInput } from "../components/typography";
 import { getWebsiteLogoUrl } from "../constants/vault";
 import { deleteCredential, getCredential } from "../lib/secureStore";
 

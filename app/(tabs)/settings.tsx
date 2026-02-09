@@ -7,10 +7,10 @@ import {
   ScrollView,
   StyleSheet,
   Switch,
-  Text,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Text } from "../../components/typography";
 
 export default function SettingsScreen() {
   const router = useRouter();
@@ -120,7 +120,7 @@ export default function SettingsScreen() {
             <Switch
               value={backupEnabled}
               onValueChange={setBackupEnabled}
-              trackColor={{ false: "#E5E7EB", true: "#C7D2FE" }}
+              trackColor={{ false: "#5B61E9", true: "#C7D2FE" }}
               thumbColor={backupEnabled ? "#5B61E9" : "#FFFFFF"}
             />
           </View>
@@ -160,7 +160,9 @@ export default function SettingsScreen() {
         ]}
       >
         <Feather name="clock" size={15} color="#FFFFFF" />
-        <Text className="ml-2 text-lg font-bold text-white">Coming soon</Text>
+        <Text className="ml-2 text-lg font-semibold text-white">
+          Coming soon
+        </Text>
       </Animated.View>
     </SafeAreaView>
   );
@@ -169,14 +171,14 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   toast: {
     position: "absolute",
-    top: 90,
+    top: 85,
     alignSelf: "center",
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 14,
     paddingVertical: 10,
     borderRadius: 999,
-    backgroundColor: "#4223f2",
+    backgroundColor: "#553be6",
     shadowColor: "#000000",
     shadowOpacity: 0.2,
     shadowRadius: 8,
