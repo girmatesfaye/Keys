@@ -307,7 +307,7 @@ export default function VaultAddScreen() {
                 params: id ? { id } : undefined,
               })
             }
-            className="mt-8 items-center rounded-2xl bg-white px-6 py-3 shadow-sm"
+            className="mt-8 items-center rounded-full bg-white px-6 py-3 shadow-sm"
           >
             <Text className="text-sm font-semibold text-slate-700">
               Edit Account
@@ -316,7 +316,7 @@ export default function VaultAddScreen() {
 
           <Pressable
             onPress={handleDelete}
-            className="mt-4 items-center rounded-2xl bg-red-500 px-6 py-3 shadow-sm"
+            className="mt-4 items-center rounded-full bg-red-500 px-6 py-3 shadow-sm"
           >
             <Text className="text-sm font-semibold text-white">
               Delete Account

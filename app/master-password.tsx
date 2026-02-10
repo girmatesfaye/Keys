@@ -86,7 +86,7 @@ export default function MasterPasswordScreen() {
             </Text>
             <View className="relative">
               <TextInput
-                className="w-full rounded-2xl bg-white p-4 pr-12 font-google-sans text-lg text-gray-900 shadow-sm border border-transparent focus:border-[#5B5FE9]"
+                className="w-full rounded-2xl bg-white p-4 pr-12 font-google-sans text-lg text-black shadow-sm border border-transparent focus:border-[#5B5FE9]"
                 placeholder="Enter password"
                 placeholderTextColor="#9CA3AF"
                 secureTextEntry

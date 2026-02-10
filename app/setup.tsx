@@ -57,7 +57,7 @@ export default function SetupScreen() {
 
       <Text className="mb-2 font-semibold text-gray-700">Create Password</Text>
       <TextInput
-        className="w-full bg-gray-50 p-4 rounded-xl mb-4 border border-gray-200"
+        className="w-full bg-gray-50 p-4 rounded-xl mb-4 border border-gray-200 text-gray-900"
         secureTextEntry
         placeholder="Enter password"
         value={password}
@@ -66,7 +66,7 @@ export default function SetupScreen() {
 
       <Text className="mb-2 font-semibold text-gray-700">Confirm Password</Text>
       <TextInput
-        className="w-full bg-gray-50 p-4 rounded-xl mb-8 border border-gray-200"
+        className="w-full bg-gray-50 p-4 rounded-xl mb-8 border border-gray-200 text-gray-900"
         secureTextEntry
         placeholder="Re-enter password"
         value={confirm}
