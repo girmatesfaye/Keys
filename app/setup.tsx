@@ -17,6 +17,8 @@ export default function SetupScreen() {
   const router = useRouter();
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const handleSave = async () => {
     if (password.length < 4) {
@@ -46,7 +48,7 @@ export default function SetupScreen() {
       <StatusBar style="dark" />
       <View className="items-center mb-8">
         <View className="h-20 w-20 bg-blue-100 rounded-full items-center justify-center mb-4">
-          <Ionicons name="shield-checkmark" size={40} color="#2563EB" />
+          <Ionicons name="shield-checkmark" size={40} color="#6366F1" />
         </View>
         <Text className="text-3xl font-bold text-gray-900">Welcome</Text>
         <Text className="text-gray-500 text-center mt-2">
@@ -56,22 +58,46 @@ export default function SetupScreen() {
       </View>
 
       <Text className="mb-2 font-semibold text-gray-700">Create Password</Text>
-      <TextInput
-        className="w-full bg-gray-50 p-4 rounded-xl mb-4 border border-gray-200 text-gray-900"
-        secureTextEntry
-        placeholder="Enter password"
-        value={password}
-        onChangeText={setPassword}
-      />
+      <View className="mb-4 justify-center">
+        <TextInput
+          className="w-full bg-gray-50 p-4 rounded-xl border border-gray-200 text-gray-900 pr-12"
+          secureTextEntry={!showPassword}
+          placeholder="Enter password"
+          value={password}
+          onChangeText={setPassword}
+        />
+        <Pressable
+          onPress={() => setShowPassword(!showPassword)}
+          className="absolute right-4"
+        >
+          <Ionicons
+            name={showPassword ? "eye-off" : "eye"}
+            size={24}
+            color="gray"
+          />
+        </Pressable>
+      </View>
 
       <Text className="mb-2 font-semibold text-gray-700">Confirm Password</Text>
-      <TextInput
-        className="w-full bg-gray-50 p-4 rounded-xl mb-8 border border-gray-200 text-gray-900"
-        secureTextEntry
-        placeholder="Re-enter password"
-        value={confirm}
-        onChangeText={setConfirm}
-      />
+      <View className="mb-8 justify-center">
+        <TextInput
+          className="w-full bg-gray-50 p-4 rounded-xl border border-gray-200 text-gray-900 pr-12"
+          secureTextEntry={!showConfirm}
+          placeholder="Re-enter password"
+          value={confirm}
+          onChangeText={setConfirm}
+        />
+        <Pressable
+          onPress={() => setShowConfirm(!showConfirm)}
+          className="absolute right-4"
+        >
+          <Ionicons
+            name={showConfirm ? "eye-off" : "eye"}
+            size={24}
+            color="gray"
+          />
+        </Pressable>
+      </View>
 
       <Pressable
         onPress={handleSave}
