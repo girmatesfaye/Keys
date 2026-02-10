@@ -12,6 +12,7 @@ import {
   TextInput,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function MasterPasswordScreen() {
   const router = useRouter();
@@ -54,77 +55,81 @@ export default function MasterPasswordScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      className="flex-1 bg-[#EEF3FF]"
-    >
-      <StatusBar style="dark" />
-      <View className="flex-1 px-6 pt-16">
-        <Pressable
-          onPress={() => router.back()}
-          className="h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm"
-        >
-          <Ionicons name="arrow-back" size={24} color="#1A1A1A" />
-        </Pressable>
+    <SafeAreaView className="flex-1 bg-[#EEF3FF]" edges={["top", "bottom"]}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        className="flex-1"
+      >
+        <StatusBar style="dark" />
+        <View className="flex-1 px-6 mt-4">
+          <Pressable
+            onPress={() => router.back()}
+            className="h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm"
+          >
+            <Ionicons name="arrow-back" size={24} color="#1A1A1A" />
+          </Pressable>
 
-        <View className="mt-10 mb-8">
-          <View className="h-16 w-16 items-center justify-center rounded-2xl bg-[#5B5FE9]/10 mb-6">
-            <Ionicons name="key" size={32} color="#5B5FE9" />
-          </View>
-          <Text className="font-google-sans-bold text-3xl text-gray-900 mb-2">
-            Master Password
-          </Text>
-          <Text className="font-google-sans text-gray-500 text-lg leading-6">
-            Enter your master password to unlock your vault.
-          </Text>
-        </View>
-
-        <View className="space-y-4">
-          <View className="space-y-2">
-            <Text className="font-google-sans-medium text-gray-700 ml-1">
-              Password
+          <View className="mt-10 mb-8">
+            <View className="h-16 w-16 items-center justify-center rounded-2xl bg-[#5B5FE9]/10 mb-6">
+              <Ionicons name="key" size={32} color="#5B5FE9" />
+            </View>
+            <Text className="font-google-sans-bold text-3xl text-gray-900 mb-2">
+              Master Password
             </Text>
-            <View className="relative">
-              <TextInput
-                className="w-full rounded-2xl bg-white p-4 pr-12 font-google-sans text-lg text-black shadow-sm border border-transparent focus:border-[#5B5FE9]"
-                placeholder="Enter password"
-                placeholderTextColor="#9CA3AF"
-                secureTextEntry
-                value={password}
-                onChangeText={(text) => {
-                  setPassword(text);
-                  setError(null); // Clear error when typing
-                }}
-                autoCapitalize="none"
-              />
-              <View className="absolute right-4 top-4">
-                <Ionicons
-                  name="lock-closed-outline"
-                  size={20}
-                  color="#9CA3AF"
+            <Text className="font-google-sans text-gray-500 text-lg leading-6">
+              Enter your master password to unlock your vault.
+            </Text>
+          </View>
+
+          <View className="space-y-4">
+            <View className="space-y-2">
+              <Text className="font-google-sans-medium text-gray-700 ml-1">
+                Password
+              </Text>
+              <View className="relative">
+                <TextInput
+                  className="w-full rounded-2xl bg-white p-4 pr-12 font-google-sans text-lg text-black shadow-sm border border-transparent focus:border-[#5B5FE9]"
+                  placeholder="Enter password"
+                  placeholderTextColor="#9CA3AF"
+                  secureTextEntry
+                  value={password}
+                  onChangeText={(text) => {
+                    setPassword(text);
+                    setError(null); // Clear error when typing
+                  }}
+                  autoCapitalize="none"
                 />
+                <View className="absolute right-4 top-4">
+                  <Ionicons
+                    name="lock-closed-outline"
+                    size={20}
+                    color="#9CA3AF"
+                  />
+                </View>
               </View>
             </View>
+
+            {/* Error Message Display */}
+            {error && (
+              <Text className="font-google-sans text-red-500 ml-1">
+                {error}
+              </Text>
+            )}
+
+            <Pressable
+              onPress={handleUnlock}
+              disabled={loading}
+              className={`mt-8 w-full rounded-full bg-[#5B5FE9] py-4 shadow-xl active:bg-[#4A4ED0] ${
+                loading ? "opacity-70" : ""
+              }`}
+            >
+              <Text className="font-google-sans-bold text-center text-lg text-white">
+                {loading ? "Verifying..." : "Unlock Vault"}
+              </Text>
+            </Pressable>
           </View>
-
-          {/* Error Message Display */}
-          {error && (
-            <Text className="font-google-sans text-red-500 ml-1">{error}</Text>
-          )}
-
-          <Pressable
-            onPress={handleUnlock}
-            disabled={loading}
-            className={`mt-8 w-full rounded-full bg-[#5B5FE9] py-4 shadow-xl active:bg-[#4A4ED0] ${
-              loading ? "opacity-70" : ""
-            }`}
-          >
-            <Text className="font-google-sans-bold text-center text-lg text-white">
-              {loading ? "Verifying..." : "Unlock Vault"}
-            </Text>
-          </Pressable>
         </View>
-      </View>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }

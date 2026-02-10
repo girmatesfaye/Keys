@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { useEffect, useState } from "react";
 import { Pressable, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Text } from "../components/typography";
 
 export default function IndexScreen() {
@@ -72,8 +73,11 @@ export default function IndexScreen() {
   }, []);
 
   return (
-    <View className="flex-1 bg-[#EEF3FF] px-6 pt-16">
-      <View className="items-center">
+    <SafeAreaView
+      className="flex-1 bg-[#EEF3FF] px-6"
+      edges={["top", "bottom"]}
+    >
+      <View className="items-center mt-6">
         <Text className="text-3xl font-extrabold text-slate-900">
           Welcome Back
         </Text>
@@ -127,6 +131,6 @@ export default function IndexScreen() {
           </Text>
         </Pressable>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
